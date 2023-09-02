@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.restapipractice.boundedContext.member.entity.Member;
 import com.example.restapipractice.boundedContext.member.service.MemberService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -29,7 +30,8 @@ public class MemberController {
 	}
 	@PostMapping("/login")
 	// @RequestBody : 요청의 본문(Json, Xml 등)을 Java 객체로 변환
-	public Member login(@Valid @RequestBody LoginRequest loginRequest) {
+	public Member login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
+		resp.addHeader("Authentication", "JWT 토큰");
 		return memberService.findByUsername(loginRequest.getUsername()).orElse(null);
 	}
 }
