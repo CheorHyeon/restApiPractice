@@ -1,6 +1,5 @@
 package com.example.restapipractice.boundedContext.member.controller;
 
-import static org.assertj.core.api.ClassBasedNavigableIterableAssert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -49,14 +48,9 @@ class MemberControllerTest {
 
 		// Then
 		resultActions
-			.andExpect(status().is2xxSuccessful());
-
-		MvcResult mvcResult = resultActions.andReturn();
-
-		MockHttpServletResponse response = mvcResult.getResponse();
-
-		String authentication = response.getHeader("Authentication");
-
-		assertThat(authentication).isNotEmpty();
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(jsonPath("$.resultCode").value("S-1"))
+			.andExpect(jsonPath("$.msg").exists())
+			.andExpect(jsonPath("$.data.accessToken").exists());
 	}
 }

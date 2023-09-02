@@ -42,8 +42,6 @@ public class MemberController {
 	public RsData<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
 		String accessToken = memberService.genAccessToken(loginRequest.getUsername(), loginRequest.getPassword());
 
-		resp.addHeader("Authentication", accessToken);
-
 		// 응답을 규격화한 객체 반환
 		// 잭슨이 Json형태로 규격화하여 반환됨
 		return RsData.of(
