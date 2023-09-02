@@ -30,8 +30,11 @@ public class MemberController {
 	}
 	@PostMapping("/login")
 	// @RequestBody : 요청의 본문(Json, Xml 등)을 Java 객체로 변환
-	public Member login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
-		resp.addHeader("Authentication", "JWT 토큰");
-		return memberService.findByUsername(loginRequest.getUsername()).orElse(null);
+	public String login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
+		String accessToken = memberService.genAccessToken(loginRequest.getUsername(), loginRequest.getPassword());
+
+		resp.addHeader("Authentication", accessToken);
+
+		return "응답본문";
 	}
 }
