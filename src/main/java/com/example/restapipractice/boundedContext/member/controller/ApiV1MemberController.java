@@ -2,12 +2,14 @@ package com.example.restapipractice.boundedContext.member.controller;
 
 import static org.springframework.http.MediaType.*;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.restapipractice.base.rsData.RsData;
+import com.example.restapipractice.boundedContext.member.entity.Member;
 import com.example.restapipractice.boundedContext.member.service.MemberService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +40,7 @@ public class ApiV1MemberController {
 	}
 	@PostMapping("/login")
 	// @RequestBody : 요청의 본문(Json, Xml 등)을 Java 객체로 변환
+	// access Token 생성
 	public RsData<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
 		String accessToken = memberService.genAccessToken(loginRequest.getUsername(), loginRequest.getPassword());
 
@@ -47,6 +50,25 @@ public class ApiV1MemberController {
 			"S-1",
 			"엑세스토큰이 생성되었습니다.",
 			new LoginResponse(accessToken)
+		);
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class MeResponse {
+		private final Member member;
+	}
+
+	// access Token을 소비
+	// consumes = ALL_VALUE => 나는 딱히 JSON 을 입력받기를 고집하지 않겠다.
+	@GetMapping(value = "/me", consumes = ALL_VALUE)
+	public RsData<MeResponse> me() {
+		Member member = memberService.findByUsername("user1").get();
+
+		return RsData.of(
+			"S-1",
+			"성공",
+			new MeResponse(member)
 		);
 	}
 }
