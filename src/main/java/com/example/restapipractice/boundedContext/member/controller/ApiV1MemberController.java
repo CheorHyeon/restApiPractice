@@ -14,6 +14,8 @@ import com.example.restapipractice.base.rsData.RsData;
 import com.example.restapipractice.boundedContext.member.entity.Member;
 import com.example.restapipractice.boundedContext.member.service.MemberService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController // 모든 메서드에서 @ResponseBody 생략 가능
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/member", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE) // Json 받고, 결과물 반환
+@Tag(name = "ApiV1MemberController", description = "로그인, 로그인 된 회원의 정보")
 public class ApiV1MemberController {
 	private final MemberService memberService;
 	@Data
@@ -41,6 +44,7 @@ public class ApiV1MemberController {
 		private final String accessToken;
 	}
 	@PostMapping("/login")
+	@Operation(summary = "로그인, 엑세스 토큰 발급")
 	// @RequestBody : 요청의 본문(Json, Xml 등)을 Java 객체로 변환
 	// access Token 생성
 	public RsData<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
@@ -64,6 +68,7 @@ public class ApiV1MemberController {
 	// access Token을 소비
 	// consumes = ALL_VALUE => 나는 딱히 JSON 을 입력받기를 고집하지 않겠다.
 	@GetMapping(value = "/me", consumes = ALL_VALUE)
+	@Operation(summary = "로그인된 사용자의 정보")
 	public RsData<MeResponse> me(@AuthenticationPrincipal User user) {
 		Member member = memberService.findByUsername(user.getUsername()).get();
 
