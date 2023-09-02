@@ -15,6 +15,7 @@ import com.example.restapipractice.boundedContext.member.entity.Member;
 import com.example.restapipractice.boundedContext.member.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -68,7 +69,8 @@ public class ApiV1MemberController {
 	// access Token을 소비
 	// consumes = ALL_VALUE => 나는 딱히 JSON 을 입력받기를 고집하지 않겠다.
 	@GetMapping(value = "/me", consumes = ALL_VALUE)
-	@Operation(summary = "로그인된 사용자의 정보")
+	// security는 스웨거에서 필요함을 명시
+	@Operation(summary = "로그인된 사용자의 정보", security = @SecurityRequirement(name = "bearerAuth"))
 	public RsData<MeResponse> me(@AuthenticationPrincipal User user) {
 		Member member = memberService.findByUsername(user.getUsername()).get();
 
