@@ -6,9 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.example.restapipractice.base.security.filter.JwtAuthorizationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class ApiSecurityConfig {
+	private final JwtAuthorizationFilter jwtAuthorizationFilter;
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
@@ -31,13 +34,12 @@ public class ApiSecurityConfig {
 			.formLogin().disable() // 폼 로그인 방식 끄기
 			.sessionManagement(sessionManagement ->
 				sessionManagement.sessionCreationPolicy(STATELESS)
-			); // 세션끄기
+			) // 세션끄기
+			.addFilterBefore(
+				jwtAuthorizationFilter, // 엑세스 토큰으로 부터 로그인 처리
+				UsernamePasswordAuthenticationFilter.class
+			);
 
 		return http.build();
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 }
