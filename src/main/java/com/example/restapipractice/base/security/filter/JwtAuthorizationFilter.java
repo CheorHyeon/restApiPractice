@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,7 +27,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 	private final MemberService memberService;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException {
 		// 헤더에서 Authorization 값을 가져온다.
 		String bearerToken = request.getHeader("Authorization");
 
@@ -37,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 			if (jwtProvider.verify(token)) {
 				Map<String, Object> claims = jwtProvider.getClaims(token);
-				long id = (int) claims.get("id");
+				long id = (int)claims.get("id");
 
 				Member member = memberService.findById(id).orElseThrow();
 

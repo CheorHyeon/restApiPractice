@@ -17,7 +17,6 @@ import com.example.restapipractice.boundedContext.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -27,23 +26,12 @@ import lombok.RequiredArgsConstructor;
 
 @RestController // 모든 메서드에서 @ResponseBody 생략 가능
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/member", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE) // Json 받고, 결과물 반환
+@RequestMapping(value = "/api/v1/member", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+// Json 받고, 결과물 반환
 @Tag(name = "ApiV1MemberController", description = "로그인, 로그인 된 회원의 정보")
 public class ApiV1MemberController {
 	private final MemberService memberService;
-	@Data
-	public static class LoginRequest {
-		@NotBlank
-		private String username;
-		@NotBlank
-		private String password;
-	}
-	
-	@AllArgsConstructor
-	@Getter
-	public static class LoginResponse {
-		private final String accessToken;
-	}
+
 	@PostMapping("/login")
 	@Operation(summary = "로그인, 엑세스 토큰 발급")
 	// @RequestBody : 요청의 본문(Json, Xml 등)을 Java 객체로 변환
@@ -53,11 +41,13 @@ public class ApiV1MemberController {
 			.findByUsername(loginRequest.getUsername())
 			.orElse(null);
 
-		if (member == null) return RsData.of("F-1", "존재하지 않는 회원입니다.");
+		if (member == null)
+			return RsData.of("F-1", "존재하지 않는 회원입니다.");
 
 		RsData rsData = memberService.canGenAccessToken(member, loginRequest.getPassword());
 
-		if (rsData.isFail()) return rsData;
+		if (rsData.isFail())
+			return rsData;
 
 		String accessToken = memberService.genAccessToken(member);
 
@@ -68,12 +58,6 @@ public class ApiV1MemberController {
 			"엑세스토큰이 생성되었습니다.",
 			new LoginResponse(accessToken)
 		);
-	}
-
-	@AllArgsConstructor
-	@Getter
-	public static class MeResponse {
-		private final Member member;
 	}
 
 	// access Token을 소비
@@ -89,5 +73,25 @@ public class ApiV1MemberController {
 			"성공",
 			new MeResponse(member)
 		);
+	}
+
+	@Data
+	public static class LoginRequest {
+		@NotBlank
+		private String username;
+		@NotBlank
+		private String password;
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class LoginResponse {
+		private final String accessToken;
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class MeResponse {
+		private final Member member;
 	}
 }

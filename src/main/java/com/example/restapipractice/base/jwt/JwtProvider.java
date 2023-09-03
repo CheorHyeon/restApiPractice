@@ -28,7 +28,8 @@ public class JwtProvider {
 	}
 
 	public SecretKey getSecretKey() {
-		if (cachedSecretKey == null) cachedSecretKey = _getSecretKey();
+		if (cachedSecretKey == null)
+			cachedSecretKey = _getSecretKey();
 
 		return cachedSecretKey;
 	}

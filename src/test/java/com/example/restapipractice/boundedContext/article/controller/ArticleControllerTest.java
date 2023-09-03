@@ -72,11 +72,11 @@ class ArticleControllerTest {
 			.perform(
 				post("/api/v1/articles")
 					.content("""
-                                        {
-                                            "subject": "제목 new",
-                                            "content": "내용 new"
-                                        }
-                                        """)
+						{
+						    "subject": "제목 new",
+						    "content": "내용 new"
+						}
+						""")
 					.contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
 			)
 			.andDo(print());
@@ -98,11 +98,11 @@ class ArticleControllerTest {
 			.perform(
 				patch("/api/v1/articles/4")
 					.content("""
-                                        {
-                                            "subject": "제목 4 !!!",
-                                            "content": "내용 4 !!!"
-                                        }
-                                        """)
+						{
+						    "subject": "제목 4 !!!",
+						    "content": "내용 4 !!!"
+						}
+						""")
 					.contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
 			)
 			.andDo(print());
@@ -117,7 +117,6 @@ class ArticleControllerTest {
 			.andExpect(jsonPath("$.data.article.content").value("내용 4 !!!"));
 	}
 
-
 	@Test
 	@DisplayName("PATCH /articles/4 partly")
 	@WithUserDetails("user1")
@@ -127,10 +126,10 @@ class ArticleControllerTest {
 			.perform(
 				patch("/api/v1/articles/4")
 					.content("""
-                                        {
-                                            "subject": "제목 4 !!!"
-                                        }
-                                        """)
+						{
+						    "subject": "제목 4 !!!"
+						}
+						""")
 					.contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
 			)
 			.andDo(print());

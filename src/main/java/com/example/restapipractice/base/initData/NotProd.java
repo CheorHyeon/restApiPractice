@@ -14,7 +14,8 @@ import com.example.restapipractice.boundedContext.member.service.MemberService;
 @Profile({"dev", "test"})
 public class NotProd {
 	@Bean
-	CommandLineRunner initData(MemberService memberService, ArticleService articleService, PasswordEncoder passwordEncoder) {
+	CommandLineRunner initData(MemberService memberService, ArticleService articleService,
+		PasswordEncoder passwordEncoder) {
 		String password = passwordEncoder.encode("1234");
 		return args -> {
 			Member admin = memberService.join("admin", password, "admin@test.com");

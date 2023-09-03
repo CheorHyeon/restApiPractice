@@ -40,12 +40,6 @@ public class ApiV1ArticlesController {
 	private final ArticleService articleService;
 	private final MemberService memberService;
 
-	@AllArgsConstructor
-	@Getter
-	public static class ArticlesResponse {
-		private final List<Article> articles;
-	}
-
 	@GetMapping(value = "")
 	@Operation(summary = "조회")
 	public RsData<ArticlesResponse> articles() {
@@ -56,12 +50,6 @@ public class ApiV1ArticlesController {
 			"성공",
 			new ArticlesResponse(articles)
 		);
-	}
-
-	@AllArgsConstructor
-	@Getter
-	public static class ArticleResponse {
-		private final Article article;
 	}
 
 	@GetMapping(value = "/{id}")
@@ -84,20 +72,6 @@ public class ApiV1ArticlesController {
 		);
 	}
 
-	@Data
-	public static class WriteRequest {
-		@NotBlank
-		private String subject;
-		@NotBlank
-		private String content;
-	}
-
-	@AllArgsConstructor
-	@Getter
-	public static class WriteResponse {
-		private final Article article;
-	}
-
 	@PostMapping(value = "", consumes = APPLICATION_JSON_VALUE)
 	@Operation(summary = "등록", security = @SecurityRequirement(name = "bearerAuth"))
 	public RsData<WriteResponse> write(
@@ -107,25 +81,14 @@ public class ApiV1ArticlesController {
 		Member member = memberService.findByUsername(user.getUsername()).orElseThrow();
 		RsData<Article> writeRs = articleService.write(member, writeRequest.getSubject(), writeRequest.getContent());
 
-		if (writeRs.isFail()) return (RsData) writeRs;
+		if (writeRs.isFail())
+			return (RsData)writeRs;
 
 		return RsData.of(
 			writeRs.getResultCode(),
 			writeRs.getMsg(),
 			new WriteResponse(writeRs.getData())
 		);
-	}
-
-	@Data
-	public static class ModifyRequest {
-		private String subject;
-		private String content;
-	}
-
-	@AllArgsConstructor
-	@Getter
-	public static class ModifyResponse {
-		private final Article article;
 	}
 
 	@PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
@@ -139,17 +102,20 @@ public class ApiV1ArticlesController {
 
 		Optional<Article> opArticle = articleService.findById(id);
 
-		if (opArticle.isEmpty()) return RsData.of(
-			"F-1",
-			"%d번 게시물은 존재하지 않습니다.".formatted(id),
-			null
-		);
+		if (opArticle.isEmpty())
+			return RsData.of(
+				"F-1",
+				"%d번 게시물은 존재하지 않습니다.".formatted(id),
+				null
+			);
 
 		RsData canModifyRs = articleService.canModify(member, opArticle.get());
 
-		if (canModifyRs.isFail()) return canModifyRs;
+		if (canModifyRs.isFail())
+			return canModifyRs;
 
-		RsData<Article> modifyRs = articleService.modify(opArticle.get(), modifyRequest.getSubject(), modifyRequest.getContent());
+		RsData<Article> modifyRs = articleService.modify(opArticle.get(), modifyRequest.getSubject(),
+			modifyRequest.getContent());
 
 		return RsData.of(
 			modifyRs.getResultCode(),
@@ -168,16 +134,56 @@ public class ApiV1ArticlesController {
 
 		Optional<Article> opArticle = articleService.findById(id);
 
-		if (opArticle.isEmpty()) return RsData.of(
-			"F-1",
-			"%d번 게시물은 존재하지 않습니다.".formatted(id),
-			null
-		);
+		if (opArticle.isEmpty())
+			return RsData.of(
+				"F-1",
+				"%d번 게시물은 존재하지 않습니다.".formatted(id),
+				null
+			);
 
 		RsData canDeleteRs = articleService.canDelete(member, opArticle.get());
 
-		if (canDeleteRs.isFail()) return canDeleteRs;
+		if (canDeleteRs.isFail())
+			return canDeleteRs;
 
 		return articleService.delete(opArticle.get());
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class ArticlesResponse {
+		private final List<Article> articles;
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class ArticleResponse {
+		private final Article article;
+	}
+
+	@Data
+	public static class WriteRequest {
+		@NotBlank
+		private String subject;
+		@NotBlank
+		private String content;
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class WriteResponse {
+		private final Article article;
+	}
+
+	@Data
+	public static class ModifyRequest {
+		private String subject;
+		private String content;
+	}
+
+	@AllArgsConstructor
+	@Getter
+	public static class ModifyResponse {
+		private final Article article;
 	}
 }

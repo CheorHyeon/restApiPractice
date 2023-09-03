@@ -63,8 +63,10 @@ public class ArticleService {
 	}
 
 	public RsData<Article> modify(Article article, String subject, String content) {
-		if (subject != null) article.setSubject(subject);
-		if (content != null) article.setContent(content);
+		if (subject != null)
+			article.setSubject(subject);
+		if (content != null)
+			article.setContent(content);
 		articleRepository.save(article);
 		return RsData.of(
 			"S-1",
