@@ -117,9 +117,7 @@ public class ApiV1ArticlesController {
 
 	@Data
 	public static class ModifyRequest {
-		@NotBlank
 		private String subject;
-		@NotBlank
 		private String content;
 	}
 
