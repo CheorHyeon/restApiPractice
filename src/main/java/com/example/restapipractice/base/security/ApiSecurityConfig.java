@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.example.restapipractice.base.security.filter.JwtAuthorizationFilter;
 
@@ -23,7 +24,7 @@ public class ApiSecurityConfig {
 	private final AuthenticationEntryPoint authenticationEntryPoint;
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
 
 		http
 			.securityMatcher("/api/**") // 아래 모든 설정은 /api/** 경로에만 적용
