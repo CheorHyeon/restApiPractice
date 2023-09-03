@@ -48,8 +48,18 @@ public class ApiV1MemberController {
 	@Operation(summary = "로그인, 엑세스 토큰 발급")
 	// @RequestBody : 요청의 본문(Json, Xml 등)을 Java 객체로 변환
 	// access Token 생성
-	public RsData<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
-		String accessToken = memberService.genAccessToken(loginRequest.getUsername(), loginRequest.getPassword());
+	public RsData<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+		Member member = memberService
+			.findByUsername(loginRequest.getUsername())
+			.orElse(null);
+
+		if (member == null) return RsData.of("F-1", "존재하지 않는 회원입니다.");
+
+		RsData rsData = memberService.canGenAccessToken(member, loginRequest.getPassword());
+
+		if (rsData.isFail()) return rsData;
+
+		String accessToken = memberService.genAccessToken(member);
 
 		// 응답을 규격화한 객체 반환
 		// 잭슨이 Json형태로 규격화하여 반환됨
